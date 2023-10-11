@@ -1,12 +1,6 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import RootNavigator from './src/Navigator/RootNavigator';
 
-function App() {
-  return (
-    <View>
-      <Text>Hello EasyPay</Text>
-    </View>
-  );
+export default function App() {
+  return <RootNavigator />;
 }
-
-export default App;
