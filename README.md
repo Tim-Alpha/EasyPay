@@ -1,4 +1,34 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# EasyPay App
+
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![React Native](https://img.shields.io/badge/React%20Native-%5E0.64.0-green)](https://reactnative.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-%5E14.17.6-green)](https://nodejs.org/)
+[![npm](https://img.shields.io/badge/npm-%5E6.14.15-green)](https://www.npmjs.com/)
+
+## Description
+
+EasyPay is a mobile application that simplifies your financial transactions and provides an overview of your account. Manage your wallet, view recent transactions, and make payments with ease. The app offers a user-friendly interface and a set of essential financial features.
+
+## Screenshots
+
+![Screenshot 1]([url_to_screenshot_1](https://github.com/nk-code-lab/EasyPay/blob/main/WhatsApp%20Image%202023-10-15%20at%209.21.36%20PM.jpeg))
+
+## Features
+
+- **Wallet Balance:** Keep track of your wallet balance in real-time.
+- **Transaction History:** View recent transactions and payment details.
+- **Multiple Options:** Perform bank transfers, scan QR codes, and make UPI transfers.
+- **Expense Tracking:** Get insights into your expenses with the View Expenses feature.
+
+## Installation
+
+```bash
+git clone https://github.com/yourusername/easypay-app.git
+cd easypay-app
+npm install
+npx react-native run-android   # For Android
+npx react-native run-ios       # For iOS
+
 
 # Getting Started
 
