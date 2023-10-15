@@ -11,7 +11,7 @@ EasyPay is a mobile application that simplifies your financial transactions and 
 
 ## Screenshots
 
-![Screenshot 1]([url_to_screenshot_1](https://github.com/nk-code-lab/EasyPay/blob/main/WhatsApp%20Image%202023-10-15%20at%209.21.36%20PM.jpeg))
+[![Screenshot 1](https://github.com/nk-code-lab/EasyPay/blob/main/WhatsApp%20Image%202023-10-15%20at%209.21.36%20PM.jpeg)])
 
 ## Features
 
