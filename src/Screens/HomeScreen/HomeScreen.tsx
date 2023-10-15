@@ -160,6 +160,15 @@ const HomeScreen = () => {
           </>
         </View>
       </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingIcon}
+        onPress={() => {
+          console.log('Floating Icon Clicked');
+        }}>
+        <MaterialCommunityIcons name="qrcode-scan" size={30} color="#fff" />
+        <Text style={styles.floatingIconText}>Scan &</Text>
+        <Text style={styles.floatingIconText}>Pay</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -320,6 +329,22 @@ const styles = StyleSheet.create({
   },
   bank: {
     color: '#888',
+  },
+  floatingIcon: {
+    position: 'absolute',
+    bottom: 5,
+    left: '35%',
+    backgroundColor: '#000',
+    width: 120,
+    height: 60,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  floatingIconText: {
+    color: '#fff',
+    marginLeft: 5,
   },
 });
 
