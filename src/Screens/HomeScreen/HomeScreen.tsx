@@ -11,11 +11,24 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import axios from 'axios';
 
 const HomeScreen = () => {
+  const [userData, setUserData] = useState({});
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
 
   // Fetch recent transactions and pending payments when the component mounts
   useEffect(() => {
+    // Fetch user data
+    axios
+      .get(
+        'https://easypaybackend.onrender.com/api/user/652bc4824281dc2ad19ae6cf',
+      )
+      .then(response => {
+        setUserData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+
     // Fetch recent transactions
     axios
       .get('https://easypaybackend.onrender.com/api/recent-transactions')
@@ -75,14 +88,23 @@ const HomeScreen = () => {
       <View style={styles.rectangleBox}>
         <View style={styles.innerRectangleBox}>
           <Text style={styles.demoAmount}>Wallet Balance</Text>
-          <Text style={styles.demoAmount}>$321,500.00</Text>
+          <Text style={styles.demoAmount}>
+            $
+            {userData.bankAccount
+              ? userData.bankAccount.fund.toFixed(2)
+              : '0.00'}
+          </Text>
         </View>
         <View style={styles.upiIdContainer}>
           <View style={styles.upiIdBox}>
-            <Text>UPI ID: sachinkinha78@icici.com</Text>
+            <Text style={styles.upiId}>UPI ID: {userData.upi_id || 'N/A'}</Text>
           </View>
           <TouchableOpacity onPress={() => alert('UPI ID copied')}>
-            <Text>Copy</Text>
+            <MaterialCommunityIcons
+              name="content-copy"
+              // size={20}
+              style={styles.copy}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.addMoneyBtn}>
@@ -194,6 +216,15 @@ const styles = StyleSheet.create({
     color: '#000',
     padding: 10,
     marginRight: 10,
+  },
+  upiId: {
+    fontSize: 15,
+    color: '#000',
+  },
+  copy: {
+    fontSize: 15,
+    marginLeft: -80,
+    color: '#000',
   },
   rectangleBox: {
     backgroundColor: '#EA1179',
