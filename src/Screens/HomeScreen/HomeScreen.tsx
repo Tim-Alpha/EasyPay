@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,31 +8,55 @@ import {
   Image,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import dummyProfileImage from '../../Assets/Images/images.png';
+import axios from 'axios';
 
 const HomeScreen = () => {
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [pendingPayments, setPendingPayments] = useState([]);
+
+  // Fetch recent transactions and pending payments when the component mounts
+  useEffect(() => {
+    // Fetch recent transactions
+    axios
+      .get('https://easypaybackend.onrender.com/api/recent-transactions')
+      .then(response => {
+        setRecentTransactions(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching recent transactions:', error);
+      });
+
+    // Fetch pending payments
+    axios
+      .get('https://easypaybackend.onrender.com/api/pending-payments')
+      .then(response => {
+        setPendingPayments(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching pending payments:', error);
+      });
+  }, []);
+
+  const formatDateToTime = timeString => {
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    };
+
+    const formattedTime = new Date(timeString).toLocaleString(
+      undefined,
+      options,
+    );
+    return formattedTime;
+  };
+
   const buttons = [{text: 'Account'}, {text: 'Debit Cards'}, {text: 'Loans'}];
   const iconData = [
     {name: 'bank-transfer', text: 'Bank Transfer'},
     {name: 'qrcode-scan', text: 'Scan QR Code'},
     {name: 'bank-transfer', text: 'UPI Transfer'},
     {name: 'chart-bar', text: 'View Expenses'},
-  ];
-  const dummyRecentPayments = [
-    {
-      profileImage: dummyProfileImage,
-      name: 'Syeda Sana',
-      amount: '+$750',
-      time: '08:45 AM',
-      bank: 'From Kotak Bank',
-    },
-    {
-      profileImage: dummyProfileImage,
-      name: 'Syeda Sana',
-      amount: '+$240',
-      time: '03:45 PM',
-      bank: 'From Kotak Bank',
-    },
   ];
 
   function alert(_arg0: string): void {
@@ -51,7 +75,7 @@ const HomeScreen = () => {
       <View style={styles.rectangleBox}>
         <View style={styles.innerRectangleBox}>
           <Text style={styles.demoAmount}>Wallet Balance</Text>
-          <Text style={styles.demoAmount}>$10,000</Text>
+          <Text style={styles.demoAmount}>$321,500.00</Text>
         </View>
         <View style={styles.upiIdContainer}>
           <View style={styles.upiIdBox}>
@@ -76,41 +100,64 @@ const HomeScreen = () => {
         ))}
       </View>
       <ScrollView style={styles.scrollContainer}>
-        <Text style={[styles.txt, styles.title]}>Recent Transaction:</Text>
+        <Text style={[styles.txt, styles.title]}>Recent Transactions:</Text>
         <View style={styles.recentPayments}>
-          {dummyRecentPayments.map((payment, index) => (
-            <View key={index} style={styles.paymentRow}>
-              <Image
-                source={payment.profileImage}
-                style={styles.profileImage}
-              />
-              <View style={styles.paymentInfo}>
-                <Text style={styles.paymentName}>{payment.name}</Text>
-                <Text style={styles.time}>
-                  {payment.time} {payment.bank}
-                </Text>
+          <>
+            {recentTransactions.map((payment, index) => (
+              <View key={index} style={styles.paymentRow}>
+                {
+                  <>
+                    <Image
+                      source={{uri: payment.senderImage}}
+                      style={styles.profileImage}
+                    />
+                    <View style={styles.paymentInfo}>
+                      <Text style={styles.paymentName}>
+                        {payment.senderName}
+                      </Text>
+                      <Text style={styles.time}>
+                        {formatDateToTime(payment.time)} From:{' '}
+                        {payment.bankName}
+                      </Text>
+                      <Text style={styles.amount}>
+                        ${payment.amount.toFixed(2)}
+                      </Text>
+                    </View>
+                  </>
+                }
               </View>
-              <Text style={styles.amount}>{payment.amount}</Text>
-            </View>
-          ))}
+            ))}
+          </>
         </View>
+
         <Text style={[styles.txt, styles.title]}>Payments Pending:</Text>
         <View style={styles.pendingPayments}>
-          {dummyRecentPayments.map((payment, index) => (
-            <View key={index} style={styles.paymentRow}>
-              <Image
-                source={payment.profileImage}
-                style={styles.profileImage}
-              />
-              <View style={styles.paymentInfo}>
-                <Text style={styles.paymentName}>{payment.name}</Text>
-                <Text style={styles.time}>
-                  {payment.time} {payment.bank}
-                </Text>
+          <>
+            {pendingPayments.map((payment, index) => (
+              <View key={index} style={styles.paymentRow}>
+                {
+                  <>
+                    <Image
+                      source={{uri: payment.senderImage}}
+                      style={styles.profileImage}
+                    />
+                    <View style={styles.paymentInfo}>
+                      <Text style={styles.paymentName}>
+                        {payment.senderName}
+                      </Text>
+                      <Text style={styles.time}>
+                        {formatDateToTime(payment.time)} From:{' '}
+                        {payment.bankName}
+                      </Text>
+                      <Text style={styles.amount}>
+                        ${payment.amount.toFixed(2)}
+                      </Text>
+                    </View>
+                  </>
+                }
               </View>
-              <Text style={styles.amount}>{payment.amount}</Text>
-            </View>
-          ))}
+            ))}
+          </>
         </View>
       </ScrollView>
     </View>
@@ -256,10 +303,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'right',
     fontWeight: 'bold',
+    marginTop: -30,
   },
   time: {
     color: '#888',
     textAlign: 'left',
+    fontSize: 12,
   },
   pendingPayments: {
     padding: 10,
@@ -268,6 +317,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  bank: {
+    color: '#888',
   },
 });
 
