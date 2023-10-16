@@ -6,6 +6,10 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  TextInput,
+  Alert,
+  Modal,
+  Button,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
@@ -14,6 +18,19 @@ const HomeScreen = () => {
   const [userData, setUserData] = useState({});
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
+  const [addMoneyAmount, setAddMoneyAmount] = useState('');
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  // Function to toggle the modal's visibility
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  // Function to handle the submission of the "Add Fund" button
+  const handleAddFund = () => {
+    // Open the modal to enter the amount
+    toggleModal();
+  };
 
   // Fetch recent transactions and pending payments when the component mounts
   useEffect(() => {
@@ -49,6 +66,40 @@ const HomeScreen = () => {
         console.error('Error fetching pending payments:', error);
       });
   }, []);
+
+  // Function to add funds and close the modal
+  const handleAddFunds = () => {
+    const amountToAdd = parseFloat(addMoneyAmount);
+    if (!isNaN(amountToAdd) && amountToAdd > 0) {
+      // Prepare the data for the POST request
+      const data = {
+        fund_add: amountToAdd,
+        userId: '652bc4824281dc2ad19ae6cf', // Replace with the actual user ID
+      };
+
+      // Make the POST request to add funds
+      axios
+        .post('https://easypaybackend.onrender.com/api/user/add_fund', data)
+        .then(response => {
+          // Update the wallet balance after a successful response
+          setUserData(response.data);
+          // Clear the input field
+          setAddMoneyAmount('');
+
+          // Show a pop-up alert box with the added amount
+          Alert.alert(
+            'Funds Added',
+            `You have added $${amountToAdd} to your wallet.`,
+          );
+        })
+        .catch(error => {
+          console.error('Error adding funds:', error);
+        });
+    }
+
+    // Close the modal
+    toggleModal();
+  };
 
   const formatDateToTime = timeString => {
     const options = {
@@ -107,9 +158,40 @@ const HomeScreen = () => {
             />
           </TouchableOpacity>
         </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={toggleModal}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text>Enter Amount:</Text>
+              <TextInput
+                style={styles.input} // Apply the 'input' style
+                placeholder="Amount"
+                value={addMoneyAmount}
+                onChangeText={text => setAddMoneyAmount(text)}
+                keyboardType="numeric"
+              />
+              <View style={styles.modalButtonContainer}>
+                <Button
+                  title="Submit"
+                  style={styles.modalButton}
+                  onPress={handleAddFunds}
+                />
+                <Button
+                  title="Cancel"
+                  style={styles.modalButton}
+                  onPress={toggleModal}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
+
         <View style={styles.addMoneyBtn}>
-          <TouchableOpacity>
-            <Text>Add money {' >'}</Text>
+          <TouchableOpacity onPress={handleAddFund}>
+            <Text>Add Fund {' >'}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -266,6 +348,30 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: '#000',
     borderRadius: 15,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  modalContent: {
+    backgroundColor: '#000',
+    width: '90%',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  input: {
+    color: '#fff',
   },
   iconsContainer: {
     flexDirection: 'row',
